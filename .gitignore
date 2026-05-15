@@ -1,0 +1,56 @@
+# OS junk
+.DS_Store
+Thumbs.db
+*.swp
+
+# Editor / IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Node
+node_modules/
+.npm
+.eslintcache
+coverage/
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Environment variables — NEVER COMMIT
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+.terraform.lock.hcl.backup
+crash.log
+
+# Kubernetes / Helm
+*.kubeconfig
+charts/*.tgz
+
+# Docker
+.docker/
+
+# Misc
+*.pem
+*.key
+.cache/
+tmp/
