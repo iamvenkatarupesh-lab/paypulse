@@ -1,0 +1,93 @@
+# PayPulse — local development stack
+# Bring up: docker compose up -d
+# Tear down: docker compose down
+# Tear down + wipe data: docker compose down -v
+
+services:
+  # ============================================
+  # PostgreSQL 16 — primary datastore
+  # ============================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: paypulse-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-paypulse}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-paypulse_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-paypulse}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U ${POSTGRES_USER:-paypulse} -d ${POSTGRES_DB:-paypulse}
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - paypulse
+
+  # ============================================
+  # Backend — Express + TypeScript API
+  # ============================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: paypulse-backend:dev
+    container_name: paypulse-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      LOG_LEVEL: ${BACKEND_LOG_LEVEL:-info}
+      # Service-name resolution: 'postgres' resolves to the postgres container on the compose network
+      DATABASE_URL: postgresql://${POSTGRES_USER:-paypulse}:${POSTGRES_PASSWORD:-paypulse_dev_password}@postgres:5432/${POSTGRES_DB:-paypulse}
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - paypulse
+
+  # ============================================
+  # Frontend — Next.js 16
+  # ============================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: paypulse-frontend:dev
+    container_name: paypulse-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      # NEXT_PUBLIC_* vars get baked into the client bundle at build time
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - paypulse
+
+# ============================================
+# Networks
+# ============================================
+networks:
+  paypulse:
+    driver: bridge
+
+# ============================================
+# Volumes (Docker-managed, persists across compose down)
+# ============================================
+volumes:
+  postgres_data:
+    driver: local
