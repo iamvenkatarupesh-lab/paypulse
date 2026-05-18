@@ -1,0 +1,30 @@
+# Dependencies — installed fresh inside container
+node_modules
+npm-debug.log*
+
+# Build artifacts (rebuilt in container)
+.next
+out
+
+# Local environment files — NEVER bake into images
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+
+# Editor / OS
+.vscode
+.idea
+.DS_Store
+*.swp
+
+# Docs not needed at runtime
+README.md
+AGENTS.md
+CLAUDE.md
+
+# CI
+.github
