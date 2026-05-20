@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: paypulse
+  labels:
+    name: paypulse
+    app.kubernetes.io/name: paypulse

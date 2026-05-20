@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: paypulse-backend-config
+  namespace: paypulse
+  labels:
+    app: paypulse-backend
+data:
+  NODE_ENV: "production"
+  PORT: "3001"
+  LOG_LEVEL: "info"
+  CORS_ORIGIN: "http://localhost:3000"
