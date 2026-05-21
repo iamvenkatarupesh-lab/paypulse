@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: paypulse
+  namespace: paypulse
+  labels:
+    app.kubernetes.io/name: paypulse
+    app.kubernetes.io/part-of: paypulse
+  annotations:
+    # Useful for debugging — preserve client info through proxy hops
+    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: paypulse.local
+      http:
+        paths:
+          # More specific paths first
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: paypulse-backend
+                port:
+                  number: 3001
+          - path: /health
+            pathType: Prefix
+            backend:
+              service:
+                name: paypulse-backend
+                port:
+                  number: 3001
+          # Catch-all for the frontend (must be LAST)
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: paypulse-frontend
+                port:
+                  number: 3000
