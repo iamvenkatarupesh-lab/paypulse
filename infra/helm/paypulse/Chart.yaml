@@ -1,0 +1,9 @@
+apiVersion: v2
+name: paypulse
+description: PayPulse — cloud-native payment app (frontend + backend + postgres + ingress)
+type: application
+version: 0.1.0           # chart version
+appVersion: "1.0.0"      # the app version we're shipping
+maintainers:
+  - name: Rupesh
+    email: iamvenkatarupesh@gmail.com

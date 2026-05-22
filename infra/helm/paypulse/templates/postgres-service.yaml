@@ -1,0 +1,19 @@
+{{- if .Values.postgres.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.postgres.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "paypulse.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+spec:
+  clusterIP: None
+  selector:
+    {{- include "paypulse.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+  ports:
+    - name: postgres
+      port: {{ .Values.postgres.port }}
+      targetPort: postgres
+{{- end }}

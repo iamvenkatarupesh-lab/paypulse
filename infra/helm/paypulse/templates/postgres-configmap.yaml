@@ -1,0 +1,14 @@
+{{- if .Values.postgres.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.postgres.name }}-config
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "paypulse.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+data:
+  POSTGRES_USER: {{ .Values.postgres.auth.user | quote }}
+  POSTGRES_DB: {{ .Values.postgres.auth.database | quote }}
+  PGDATA: "/var/lib/postgresql/data/pgdata"
+{{- end }}

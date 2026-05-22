@@ -1,0 +1,36 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "paypulse.labels" . | nindent 4 }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.backend.name }}
+                port:
+                  number: {{ .Values.backend.port }}
+          - path: /health
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.backend.name }}
+                port:
+                  number: {{ .Values.backend.port }}
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.frontend.name }}
+                port:
+                  number: {{ .Values.frontend.port }}
+{{- end }}

@@ -1,0 +1,15 @@
+{{- if .Values.backend.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.backend.name }}-config
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "paypulse.labels" . | nindent 4 }}
+    app.kubernetes.io/component: backend
+data:
+  PORT: "{{ .Values.backend.port }}"
+  {{- range $key, $value := .Values.backend.env }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+{{- end }}
