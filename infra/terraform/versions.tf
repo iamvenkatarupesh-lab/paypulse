@@ -11,4 +11,12 @@ terraform {
       version = "~> 3.6"
     }
   }
+
+  backend "s3" {
+    bucket         = "paypulse-tfstate-658313dc"
+    key            = "bootstrap/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    dynamodb_table = "paypulse-tf-lock"
+  }
 }
