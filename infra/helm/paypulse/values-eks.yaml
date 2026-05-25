@@ -17,7 +17,7 @@ image:
 backend:
   image:
     repository: paypulse/backend
-    tag: v1
+    tag: v2
 
 frontend:
   image:

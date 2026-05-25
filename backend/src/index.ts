@@ -7,6 +7,7 @@ import { env } from './config/env.js';
 import { logger } from './config/logger.js';
 import { healthRouter } from './routes/health.routes.js';
 import { paymentsRouter } from './routes/payments.routes.js';
+import { dbRouter } from './routes/db.routes.js';
 import {
   errorHandler,
   notFoundHandler,
@@ -23,6 +24,7 @@ app.use(pinoHttp({ logger }));
 // Routes
 app.use('/', healthRouter); // GET /health
 app.use('/api', paymentsRouter); // /api/payments
+app.use('/api', dbRouter); // GET /api/db-health
 
 // 404 + error handlers (must be LAST)
 app.use(notFoundHandler);

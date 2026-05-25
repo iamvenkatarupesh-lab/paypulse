@@ -35,6 +35,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Values.backend.name }}-config
+            - secretRef:
+                name: paypulse-db-credentials
+                optional: true    
           resources:
             {{- toYaml .Values.backend.resources | nindent 12 }}
           livenessProbe:
