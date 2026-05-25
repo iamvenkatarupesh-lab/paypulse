@@ -1,0 +1,42 @@
+# ============================================================================
+# values-eks.yaml — overrides for EKS deployment
+#
+# Apply with:
+#   helm install paypulse ./infra/helm/paypulse \
+#     -f ./infra/helm/paypulse/values-eks.yaml
+#
+# (The chart's default values.yaml is loaded automatically; this file is
+# layered on top of it.)
+# ============================================================================
+
+# Pull images from your private ECR instead of GHCR
+image:
+  registry: 644981759464.dkr.ecr.us-east-1.amazonaws.com
+  pullPolicy: IfNotPresent
+
+backend:
+  image:
+    repository: paypulse/backend
+    tag: v1
+
+frontend:
+  image:
+    repository: paypulse/frontend
+    tag: v1
+  # Expose frontend via AWS Network Load Balancer.
+  # EKS sees type=LoadBalancer and auto-provisions an NLB
+  # in the public subnets we tagged kubernetes.io/role/elb=1.
+  service:
+    type: LoadBalancer
+
+# Skip the in-cluster postgres StatefulSet.
+# We have a real RDS instance running, even though Phase 5 backend
+# doesn't consume it yet (deferred to Step 24).
+postgres:
+  enabled: false
+
+# Skip the ingress.yaml resource - no nginx-ingress-controller
+# installed on this cluster. Frontend reaches the world via its
+# LoadBalancer service instead.
+ingress:
+  enabled: false
