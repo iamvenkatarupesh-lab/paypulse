@@ -1,0 +1,45 @@
+# ============================================================================
+# values-prometheus-stack.yaml
+# Customizations for kube-prometheus-stack on PayPulse EKS.
+#
+# Apply with:
+#   helm upgrade --install kube-prom-stack \
+#     prometheus-community/kube-prometheus-stack \
+#     --namespace monitoring \
+#     --create-namespace \
+#     -f infra/helm/monitoring/values-prometheus-stack.yaml \
+#     --wait --timeout 10m
+# ============================================================================
+
+grafana:
+  # Dev-only password. In production this is a secretRef.
+  adminPassword: paypulse_grafana_dev
+  defaultDashboardsTimezone: browser
+  # Don't persist Grafana to a PVC (no EBS CSI driver installed yet).
+  # Dashboards reset on pod restart - fine for dev.
+  persistence:
+    enabled: false
+
+# Constrain Prometheus memory so it doesn't crowd out PayPulse pods.
+prometheus:
+  prometheusSpec:
+    retention: 7d
+    resources:
+      requests:
+        memory: "400Mi"
+        cpu: "100m"
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+
+# Single AlertManager replica is fine for dev.
+alertmanager:
+  alertmanagerSpec:
+    replicas: 1
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "50m"
+      limits:
+        memory: "128Mi"
+        cpu: "100m"
